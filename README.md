@@ -1,0 +1,2 @@
+# MapStructSample
+MapStruct Sample Project

@@ -10,9 +10,9 @@ import org.mapstruct.BeanMapping;
 import org.mapstruct.DecoratedWith;
 import org.mapstruct.InheritInverseConfiguration;
 
-@Mapper(componentModel = "spring" , unmappedTargetPolicy = ReportingPolicy.WARN 
-, uses = org.example.Sample2Dto2DomainConverter.class
-)
+
+
+@Mapper(componentModel = "spring" , unmappedTargetPolicy = ReportingPolicy.WARN , uses = { org.example.Sample2Dto2DomainConverter.class,  } )
 public interface Sample2Dto2DomainMapper {
 
   
@@ -28,8 +28,6 @@ public interface Sample2Dto2DomainMapper {
 
 
 
-
-
      /**
      * org.example.sample2.model.Sample2Dto source の各プロパティをorg.example.sample2.model.Sample2Domain target へコピーする。
      * @Mapping(source = "param1", target = "param2") などで、プロパティ名の関連付けも可能
@@ -40,6 +38,5 @@ public interface Sample2Dto2DomainMapper {
     @Mapping(source = "param3", target = "domainParam3" ,qualifiedByName = "toInt")
     void toDomainUpdate(org.example.sample2.model.Sample2Dto source, @MappingTarget org.example.sample2.model.Sample2Domain target);
 
-    
 
 }

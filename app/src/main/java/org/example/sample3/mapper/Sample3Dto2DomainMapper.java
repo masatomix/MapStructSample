@@ -10,8 +10,9 @@ import org.mapstruct.BeanMapping;
 import org.mapstruct.DecoratedWith;
 import org.mapstruct.InheritInverseConfiguration;
 
-@Mapper(componentModel = "spring" , unmappedTargetPolicy = ReportingPolicy.WARN 
-)
+
+
+@Mapper(componentModel = "spring" , unmappedTargetPolicy = ReportingPolicy.WARN  )
 public interface Sample3Dto2DomainMapper {
 
   
@@ -28,8 +29,6 @@ public interface Sample3Dto2DomainMapper {
 
 
 
-
-
      /**
      * org.example.sample3.model.Sample3Dto source の各プロパティをorg.example.sample3.model.Order target へコピーする。
      * @Mapping(source = "param1", target = "param2") などで、プロパティ名の関連付けも可能
@@ -41,7 +40,6 @@ public interface Sample3Dto2DomainMapper {
     @Mapping(source = "orderValue", target = "value")
     void toOrderUpdate(org.example.sample3.model.Sample3Dto source, @MappingTarget org.example.sample3.model.Order target);
 
-    
 
   
      /**
@@ -57,8 +55,6 @@ public interface Sample3Dto2DomainMapper {
 
 
 
-
-
      /**
      * org.example.sample3.model.Sample3Dto source の各プロパティをorg.example.sample3.model.Sample3Domain target へコピーする。
      * @Mapping(source = "param1", target = "param2") などで、プロパティ名の関連付けも可能
@@ -70,6 +66,5 @@ public interface Sample3Dto2DomainMapper {
     @Mapping(source = ".", target = "order")
     void toDomainUpdate(org.example.sample3.model.Sample3Dto source, @MappingTarget org.example.sample3.model.Sample3Domain target);
 
-    
 
 }

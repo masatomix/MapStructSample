@@ -14,6 +14,8 @@ import org.example.sample5.model.Sample5Domain;
 import org.example.sample5.model.Sample5Dto1;
 import org.example.sample5.model.Sample5Dto2;
 import org.example.sample5.model.Sample5Dto3;
+import org.example.sample6.mapper.Sample6Dto2DomainMapper;
+import org.example.sample6.model.Sample6Dto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -68,12 +70,10 @@ public class App implements CommandLineRunner {
             var mapper = context.getBean(Sample4Dto2DomainMapper.class);
             var to = mapper.toDomain(from);
 
-            
             System.out.println(from);
             System.out.println(to);
 
         }
-
         {
             var from1 = new Sample5Dto1("id1", "value1");
             var from2 = new Sample5Dto2("id2", "value2");
@@ -83,17 +83,27 @@ public class App implements CommandLineRunner {
             Sample5Domain to = null;
 
             to = new Sample5Domain();
-            mapper.toDomain1Update(from1, to);
+            mapper.toDomainUpdate(from1, to);
             System.out.println(to + ": v1だけ、コピーされた");
-            mapper.toDomain2Update(from2, to);
+            mapper.toDomainUpdate(from2, to);
             System.out.println(to + ": id,v2だけ、コピーされた");
-            mapper.toDomain3Update(from3, to);
+            mapper.toDomainUpdate(from3, to);
             System.out.println(to + ": v3だけ、コピーされた");
 
-            to = new Sample5Domain();
-            mapper.toDomainUpdate(from1, from2, from3, to);
-            System.out.println(to);
+            // to = new Sample5Domain();
+            // mapper.toDomainUpdate(from1, from2, from3, to);
+            // System.out.println(to);
         }
+        {
+
+            var from = new Sample6Dto("id", "value1", "value2", "value3");
+            var mapper = context.getBean(Sample6Dto2DomainMapper.class);
+            System.out.println(from);
+            System.out.println(mapper.toDomain1(from));
+            System.out.println(mapper.toDomain2(from));
+            System.out.println(mapper.toDomain3(from)+ ": idコピーはちゃんと除外できた");
+        }
+
     }
 
 }

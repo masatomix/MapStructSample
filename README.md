@@ -546,3 +546,88 @@ Sample5Domain(id=id2, v1=value1, v2=value2, v3=value3)
 なので、明示的にコピーを抑止したい``@Mapping(target = "id", ignore = true)``だけの記述でもOKです。
 ただ 、``unmappedTargetPolicy = ReportingPolicy.WARN``  などにしていると、警告が出ます。
 
+
+
+
+## Sample6:一つのオブジェクトから複数のオブジェクトを作成する。
+
+先ほどの逆。複数のオブジェクトのコピーは順次やるだけ。
+
+![alt text](sample6.png)
+
+`Sample6Domain3` の`id`だけ除外してみます。名前が一致しているのは省略するなど、最低限で書いてみると、下記の通りとってもシンプルです。
+
+Mapper
+
+```java
+package org.example.sample6.mapper;
+
+import org.example.sample6.model.Sample6Domain1;
+import org.example.sample6.model.Sample6Domain2;
+import org.example.sample6.model.Sample6Domain3;
+import org.example.sample6.model.Sample6Dto;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
+
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.WARN)
+public interface Sample6Dto2DomainMapper {
+
+    Sample6Domain1 toDomain1(Sample6Dto source);
+    Sample6Domain2 toDomain2(Sample6Dto source);
+
+    @Mapping(target = "id", ignore = true)
+    Sample6Domain3 toDomain3(Sample6Dto source);
+
+}
+```
+
+
+Main
+
+```java
+package org.example;
+
+import org.example.sample6.mapper.Sample6Dto2DomainMapper;
+import org.example.sample6.model.Sample6Dto;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+
+@SpringBootApplication
+public class App implements CommandLineRunner {
+    @Autowired
+    private ApplicationContext context;
+
+    public static void main(String[] args) {
+        SpringApplication.run(App.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        {
+
+            var from = new Sample6Dto("id", "value1", "value2", "value3");
+            var mapper = context.getBean(Sample6Dto2DomainMapper.class);
+            System.out.println(from);
+            System.out.println(mapper.toDomain1(from));
+            System.out.println(mapper.toDomain2(from));
+            System.out.println(mapper.toDomain3(from)+ ": idコピーはちゃんと除外できた");
+        }
+
+    }
+
+}
+```
+
+実行結果
+
+```console
+Sample6Dto(id=id, v1=v1, v2=v2, v3=v3)
+Sample6Domain1(id=id, v1=v1)
+Sample6Domain2(id=id, v2=v2)
+Sample6Domain3(id=null, v3=v3): idコピーはちゃんと除外できた
+
+```

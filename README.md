@@ -625,9 +625,8 @@ public class App implements CommandLineRunner {
 実行結果
 
 ```console
-Sample6Dto(id=id, v1=v1, v2=v2, v3=v3)
-Sample6Domain1(id=id, v1=v1)
-Sample6Domain2(id=id, v2=v2)
-Sample6Domain3(id=null, v3=v3): idコピーはちゃんと除外できた
-
+Sample6Dto(id=id, v1=value1, v2=value2, v3=value3)
+Sample6Domain1(id=id, v1=value1)
+Sample6Domain2(id=id, v2=value2)
+Sample6Domain3(id=null, v3=value3): idコピーはちゃんと除外できた
 ```

@@ -9,6 +9,11 @@ import org.example.sample3.model.Sample3Dto;
 import org.example.sample4.mapper.Sample4Dto2DomainMapper;
 import org.example.sample4.model.Order;
 import org.example.sample4.model.Sample4Dto;
+import org.example.sample5.mapper.Sample5Dto2DomainMapper;
+import org.example.sample5.model.Sample5Domain;
+import org.example.sample5.model.Sample5Dto1;
+import org.example.sample5.model.Sample5Dto2;
+import org.example.sample5.model.Sample5Dto3;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -67,6 +72,27 @@ public class App implements CommandLineRunner {
             System.out.println(from);
             System.out.println(to);
 
+        }
+
+        {
+            var from1 = new Sample5Dto1("id1", "value1");
+            var from2 = new Sample5Dto2("id2", "value2");
+            var from3 = new Sample5Dto3("id3", "value3");
+
+            var mapper = context.getBean(Sample5Dto2DomainMapper.class);
+            Sample5Domain to = null;
+
+            to = new Sample5Domain();
+            mapper.toDomain1Update(from1, to);
+            System.out.println(to + ": v1だけ、コピーされた");
+            mapper.toDomain2Update(from2, to);
+            System.out.println(to + ": id,v2だけ、コピーされた");
+            mapper.toDomain3Update(from3, to);
+            System.out.println(to + ": v3だけ、コピーされた");
+
+            to = new Sample5Domain();
+            mapper.toDomainUpdate(from1, from2, from3, to);
+            System.out.println(to);
         }
     }
 

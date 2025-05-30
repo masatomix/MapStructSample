@@ -1,0 +1,41 @@
+@startuml
+
+class Sample5Dto1 {
+    - id String
+    - v1 String
+}
+
+class Sample5Dto2 {
+    - id String
+    - v2 String
+}
+
+class Sample5Dto3 {
+    - id String
+    - v3 String
+}
+
+class Sample5Domain {
+    - id String
+    - v1 String
+    - v2 String
+    - v3 String
+}
+
+
+' interface Sample5Dto2DomainMapper{
+'     + toDomainUpdate1(source ,target ) : void
+'     + toDomainUpdate2(source ,target ) : void
+'     + toDomainUpdate3(source ,target ) : void
+'     + toDomainUpdate(s1,s2,s3,target) : void
+' }
+
+Sample5Dto1 ..> Sample5Domain :copy
+note on link: v1
+Sample5Dto2 ..> Sample5Domain :copy
+note on link: v2,id
+Sample5Dto3 ..> Sample5Domain :copy
+note on link: v3
+
+
+@enduml

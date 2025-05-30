@@ -396,3 +396,153 @@ Sample4Domain(orderId=0001, orderValue=オーダー001, param2=100, domainParam3
 ```
 
 
+
+## Sample5: 複数のオブジェクトから一つのオブジェクトを作成する
+
+複数のクラス ``Sample5Dto1,Sample5Dto2,Sample5Dto3``から、一つの``Sample5Domain``オブジェクトを作成します。
+
+
+![alt text](sample5.png)
+
+
+上記のクラス図のように、プロパティ名が重複していて、``Sample5Dto2``の``id``を使いたいケース、とします。
+
+
+- インスタンスを渡して、一部だけ更新するメソッドを作成します。
+  - ``void toDomain1Update(Sample5Dto1 source,@MappingTarget Sample5Domain target);`` のように、targetのインスタンスを渡すと、指定したプロパティだけを更新します。 
+  - ``Sample5Dto1,Sample5Dto2,Sample5Dto3``それぞれの更新メソッドを用いて、複数のオブジェクトから``Sample5Domain``を構築できます。
+  - ``@Mapping(target = "id", ignore = true)``などで、targetの更新したくないプロパティ名を指定できます。
+  - Fromのクラス達に同名のプロパティがある場合に、どのFromから更新するかを明示的にすることができます。
+- また、複数のオブジェクトを引数にとって、それらから一度に更新するメソッドを作成する事もできます。
+  - どの引数のオブジェクトかを明確にするために ``@Mapping(source = "s2.id", target = "id")`` のような記法を用います。
+
+
+Mapper
+```java
+package org.example.sample5.mapper;
+
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+
+import org.mapstruct.ReportingPolicy;
+import org.example.sample5.model.Sample5Domain;
+import org.example.sample5.model.Sample5Dto1;
+import org.example.sample5.model.Sample5Dto2;
+import org.example.sample5.model.Sample5Dto3;
+
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.WARN)
+public interface Sample5Dto2DomainMapper {
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(source = "v1", target = "v1")
+    @Mapping(target = "v2", ignore = true)
+    @Mapping(target = "v3", ignore = true)
+    void toDomain1Update(Sample5Dto1 source,
+            @MappingTarget Sample5Domain target);
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(target = "v1", ignore = true)
+    @Mapping(source = "v2", target = "v2")
+    @Mapping(target = "v3", ignore = true)
+    void toDomain2Update(Sample5Dto2 source,
+            @MappingTarget Sample5Domain target);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "v1", ignore = true)
+    @Mapping(target = "v2", ignore = true)
+    @Mapping(source = "v3", target = "v3")
+    void toDomain3Update(Sample5Dto3 source,
+            @MappingTarget Sample5Domain target);
+
+
+
+    @Mapping(source = "s2.id", target = "id")
+    void toDomainUpdate(Sample5Dto1 s1, Sample5Dto2 s2, Sample5Dto3 s3,
+            @MappingTarget Sample5Domain target);
+
+}
+
+```
+
+Main
+```java
+package org.example;
+
+import org.example.sample1.mapper.Sample1Dto2DomainMapper;
+import org.example.sample1.model.Sample1Dto;
+import org.example.sample2.mapper.Sample2Dto2DomainMapper;
+import org.example.sample2.model.Sample2Dto;
+import org.example.sample3.mapper.Sample3Dto2DomainMapper;
+import org.example.sample3.model.Sample3Dto;
+import org.example.sample4.mapper.Sample4Dto2DomainMapper;
+import org.example.sample4.model.Order;
+import org.example.sample4.model.Sample4Dto;
+import org.example.sample5.mapper.Sample5Dto2DomainMapper;
+import org.example.sample5.model.Sample5Domain;
+import org.example.sample5.model.Sample5Dto1;
+import org.example.sample5.model.Sample5Dto2;
+import org.example.sample5.model.Sample5Dto3;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+
+@SpringBootApplication
+public class App implements CommandLineRunner {
+    @Autowired
+    private ApplicationContext context;
+
+    public static void main(String[] args) {
+        SpringApplication.run(App.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        {
+            var from1 = new Sample5Dto1("id1", "value1");
+            var from2 = new Sample5Dto2("id2", "value2");
+            var from3 = new Sample5Dto3("id3", "value3");
+
+            var mapper = context.getBean(Sample5Dto2DomainMapper.class);
+            Sample5Domain to = null;
+
+            to = new Sample5Domain();
+            mapper.toDomain1Update(from1, to);
+            System.out.println(to + ": v1だけ、コピーされた");
+            mapper.toDomain2Update(from2, to);
+            System.out.println(to + ": id,v2だけ、コピーされた");
+            mapper.toDomain3Update(from3, to);
+            System.out.println(to + ": v3だけ、コピーされた");
+
+            to = new Sample5Domain();
+            mapper.toDomainUpdate(from1, from2, from3, to);
+            System.out.println(to);
+        }
+    }
+
+}
+```
+実行結果
+
+```console
+Sample5Domain(id=null, v1=value1, v2=null, v3=null): v1だけ、コピーされた
+Sample5Domain(id=id2, v1=value1, v2=value2, v3=null): id,v2だけ、コピーされた
+Sample5Domain(id=id2, v1=value1, v2=value2, v3=value3): v3だけ、コピーされた
+Sample5Domain(id=id2, v1=value1, v2=value2, v3=value3)
+```
+
+注:下記コメントに書きましたが、実際は
+
+```java
+    @Mapping(target = "id", ignore = true) 
+    @Mapping(source = "v1", target = "v1") // 同名は記述不要
+    @Mapping(target = "v2", ignore = true) // sourceにv2がないので実際は記述不要
+    @Mapping(target = "v3", ignore = true) // 同上
+    void toDomain1Update(Sample5Dto1 source, @MappingTarget Sample5Domain target);
+```
+
+なので、明示的にコピーを抑止したい``@Mapping(target = "id", ignore = true)``だけの記述でもOKです。
+ただ 、``unmappedTargetPolicy = ReportingPolicy.WARN``  などにしていると、警告が出ます。
+

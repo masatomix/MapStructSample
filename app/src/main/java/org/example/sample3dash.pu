@@ -1,0 +1,32 @@
+@startuml
+
+class Sample3Dto {
+    - orderId orderId
+    - param2 String
+    - param3 String
+}
+
+class Sample3Domain {
+    - order Order
+    - param2 Integer
+    - domainParam3 String
+}
+
+class Order {
+    - id String
+}
+
+interface Sample3Dto2DomainMapper{
+    + toDomain(dto Sample3Dto) : Sample3Domain
+}
+
+class Sample3Dto2DomainConverter {
+    + @Named("toOrder") Order toOrder(String orderId);
+}
+
+Sample3Dto2DomainMapper .> Sample3Dto2DomainConverter:<<use>>
+Sample3Dto .> Sample3Domain :copy
+Sample3Dto2DomainMapper ..> Sample3Dto: from
+Sample3Dto2DomainMapper ..> Sample3Domain: to
+Sample3Domain ..> Order
+@enduml

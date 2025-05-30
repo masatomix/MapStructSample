@@ -1,0 +1,34 @@
+@startuml
+
+class Sample4Dto {
+    - order Order
+    - param2 String
+    - param3 String
+}
+
+class Order {
+    - id String
+    - value String
+}
+
+class Sample4Domain {
+    - orderId String
+    - orderValue String
+    - param2 Integer
+    - domainParam3 String
+}
+
+
+
+interface Sample4Dto2DomainMapper{
+    + toOrder(dto Sample4Dto) : Order
+    + toDomain(dto Sample4Dto) : Sample4Domain
+}
+
+
+Sample4Dto .> Sample4Domain :copy
+Sample4Dto --> Order : field
+Sample4Dto2DomainMapper ..> Sample4Dto: from
+Sample4Dto2DomainMapper ..> Sample4Domain: to
+
+@enduml

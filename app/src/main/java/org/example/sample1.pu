@@ -1,0 +1,23 @@
+@startuml
+
+class Sample1Dto {
+    - param1 String
+    - param2 String
+    - param3 String
+}
+
+class Sample1Domain {
+    - param1 String
+    - param2 Integer
+    - domainParam3 String
+}
+
+interface Sample1Dto2DomainMapper{
+    + toDomain(dto Sample1Dto) : Sample1Domain
+}
+
+
+Sample1Dto .> Sample1Domain :copy
+Sample1Dto2DomainMapper ..> Sample1Dto: from
+Sample1Dto2DomainMapper ..> Sample1Domain: to
+@enduml

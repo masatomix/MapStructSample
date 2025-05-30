@@ -1,0 +1,37 @@
+@startuml
+
+
+class Sample3Dto {
+    - orderId String
+    - orderValue String
+    - param2 String
+    - param3 String
+}
+
+class Sample3Domain {
+    - order Order
+    - param2 Integer
+    - domainParam3 String
+}
+
+class Order {
+    - id String
+    - value String
+}
+
+
+interface Sample3Dto2DomainMapper{
+    + toOrder(dto Sample3Dto) : Order
+    + toDomain(dto Sample3Dto) : Sample3Domain
+}
+
+
+Sample3Dto .> Sample3Domain :copy
+Sample3Dto .> Order :copy
+Sample3Dto2DomainMapper ..> Sample3Dto: from
+Sample3Dto2DomainMapper ..> Sample3Domain: to
+Sample3Domain --> Order : field
+' ★ Sample3Domainの下にOrderを配置するための非表示リンク
+Sample3Domain -[hidden]-> Order
+
+@enduml

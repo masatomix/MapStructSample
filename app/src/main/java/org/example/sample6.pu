@@ -1,0 +1,33 @@
+@startuml
+
+class Sample6Domain1 {
+    - id String
+    - v1 String
+}
+
+class Sample6Domain2 {
+    - id String
+    - v2 String
+}
+
+class Sample6Domain3 {
+    - id String
+    - v3 String
+}
+
+class Sample6Dto {
+    - id String
+    - v1 String
+    - v2 String
+    - v3 String
+}
+
+Sample6Dto ..> Sample6Domain1:copy
+note on link: id,v1
+Sample6Dto ..> Sample6Domain2:copy
+note on link: id,v2
+Sample6Dto ..> Sample6Domain3:copy
+note on link: v3
+
+
+@enduml

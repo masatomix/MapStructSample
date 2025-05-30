@@ -27,7 +27,7 @@ public interface Sample5Dto2DomainMapper {
     @Mapping(source = "v1", target = "v1")
     @Mapping(target = "v2" , ignore = true)
     @Mapping(target = "v3" , ignore = true)
-    org.example.sample5.model.Sample5Domain toDomain1(org.example.sample5.model.Sample5Dto1 source);
+    org.example.sample5.model.Sample5Domain toDomain(org.example.sample5.model.Sample5Dto1 source);
 
 
 
@@ -42,7 +42,7 @@ public interface Sample5Dto2DomainMapper {
     @Mapping(source = "v1", target = "v1")
     @Mapping(target = "v2" , ignore = true)
     @Mapping(target = "v3" , ignore = true)
-    void toDomain1Update(org.example.sample5.model.Sample5Dto1 source, @MappingTarget org.example.sample5.model.Sample5Domain target);
+    void toDomainUpdate(org.example.sample5.model.Sample5Dto1 source, @MappingTarget org.example.sample5.model.Sample5Domain target);
 
 
   
@@ -57,7 +57,7 @@ public interface Sample5Dto2DomainMapper {
     @Mapping(target = "v1" , ignore = true)
     @Mapping(source = "v2", target = "v2")
     @Mapping(target = "v3" , ignore = true)
-    org.example.sample5.model.Sample5Domain toDomain2(org.example.sample5.model.Sample5Dto2 source);
+    org.example.sample5.model.Sample5Domain toDomain(org.example.sample5.model.Sample5Dto2 source);
 
 
 
@@ -72,7 +72,7 @@ public interface Sample5Dto2DomainMapper {
     @Mapping(target = "v1" , ignore = true)
     @Mapping(source = "v2", target = "v2")
     @Mapping(target = "v3" , ignore = true)
-    void toDomain2Update(org.example.sample5.model.Sample5Dto2 source, @MappingTarget org.example.sample5.model.Sample5Domain target);
+    void toDomainUpdate(org.example.sample5.model.Sample5Dto2 source, @MappingTarget org.example.sample5.model.Sample5Domain target);
 
 
   
@@ -87,7 +87,7 @@ public interface Sample5Dto2DomainMapper {
     @Mapping(target = "v1" , ignore = true)
     @Mapping(target = "v2" , ignore = true)
     @Mapping(source = "v3", target = "v3")
-    org.example.sample5.model.Sample5Domain toDomain3(org.example.sample5.model.Sample5Dto3 source);
+    org.example.sample5.model.Sample5Domain toDomain(org.example.sample5.model.Sample5Dto3 source);
 
 
 
@@ -102,7 +102,7 @@ public interface Sample5Dto2DomainMapper {
     @Mapping(target = "v1" , ignore = true)
     @Mapping(target = "v2" , ignore = true)
     @Mapping(source = "v3", target = "v3")
-    void toDomain3Update(org.example.sample5.model.Sample5Dto3 source, @MappingTarget org.example.sample5.model.Sample5Domain target);
+    void toDomainUpdate(org.example.sample5.model.Sample5Dto3 source, @MappingTarget org.example.sample5.model.Sample5Domain target);
 
 
 }

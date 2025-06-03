@@ -2,6 +2,17 @@
 
 MapStruct Sample Project
 
+## サンプル実行方法
+
+Gradle等がインストールされていれば
+
+```
+$  ./gradlew clean bootRun
+```
+
+で動くと思います。
+
+
 ## Sample1: 通常パタン
 
 - プロパティ名が同じ場合は、自動でマッピングされる。
@@ -630,3 +641,239 @@ Sample6Domain1(id=id, v1=value1)
 Sample6Domain2(id=id, v2=value2)
 Sample6Domain3(id=null, v3=value3): idコピーはちゃんと除外できた
 ```
+
+
+
+
+
+## Sample7:オブジェクトのプロパティのFrom/Toに List がある場合
+
+- プロパティにListがあったとしても、コピーできる
+- コピーロジックを明示的にするために、 uses で、Listの要素のMapperを教えてあげる
+
+![alt text](sample7.png)
+
+
+
+Mapper
+
+```java
+package org.example.sample7.mapper;
+
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+
+import org.mapstruct.ReportingPolicy;
+import org.example.sample3.mapper.Sample3Dto2DomainMapper;
+import org.example.sample7.model.Sample7Domain;
+import org.example.sample7.model.Sample7Dto;
+
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.WARN, uses = {
+        Sample3Dto2DomainMapper.class, })
+public interface Sample7Dto2DomainMapper {
+
+    @Mapping(source = "sample3dtos", target = "sample3domains")
+    Sample7Domain toDomain(Sample7Dto source);
+
+    @Mapping(source = "sample3dtos", target = "sample3domains")
+    void toDomainUpdate(Sample7Dto source,
+            @MappingTarget Sample7Domain target);
+
+}
+```
+
+
+Main
+
+```java
+package org.example;
+
+import java.util.List;
+
+import org.example.sample1.mapper.Sample1Dto2DomainMapper;
+import org.example.sample1.model.Sample1Dto;
+import org.example.sample2.mapper.Sample2Dto2DomainMapper;
+import org.example.sample2.model.Sample2Dto;
+import org.example.sample3.mapper.Sample3Dto2DomainMapper;
+import org.example.sample3.model.Sample3Dto;
+import org.example.sample4.mapper.Sample4Dto2DomainMapper;
+import org.example.sample4.model.Order;
+import org.example.sample4.model.Sample4Dto;
+import org.example.sample5.mapper.Sample5Dto2DomainMapper;
+import org.example.sample5.model.Sample5Domain;
+import org.example.sample5.model.Sample5Dto1;
+import org.example.sample5.model.Sample5Dto2;
+import org.example.sample5.model.Sample5Dto3;
+import org.example.sample6.mapper.Sample6Dto2DomainMapper;
+import org.example.sample6.model.Sample6Dto;
+import org.example.sample7.mapper.Sample7Dto2DomainMapper;
+import org.example.sample7.model.Sample7Dto;
+import org.example.sample8.mapper.Sample8Dto2DomainMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+
+@SpringBootApplication
+public class App implements CommandLineRunner {
+    @Autowired
+    private ApplicationContext context;
+
+    public static void main(String[] args) {
+        SpringApplication.run(App.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        {
+            var fromList = List.of(
+                    new Sample3Dto("0011", "オーダー011", "101", "11歳"),
+                    new Sample3Dto("0021", "オーダー021", "102", "12歳"),
+                    new Sample3Dto("0031", "オーダー031", "103", "13歳"));
+
+            var from = new Sample7Dto(fromList);
+            var mapper = context.getBean(Sample7Dto2DomainMapper.class);
+
+            System.out.println(from);
+            var to = mapper.toDomain(from);
+            System.out.println(to);
+        }
+    }
+
+}
+```
+
+実行結果(適度に改行入れました)
+
+```console
+Sample7Dto(sample3dtos=
+[Sample3Dto(orderId=0011, orderValue=オーダー011, param2=101, param3=11歳), 
+ Sample3Dto(orderId=0021, orderValue=オーダー021, param2=102, param3=12歳),
+ Sample3Dto(orderId=0031, orderValue=オーダー031, param2=103, param3=13歳)])
+Sample7Domain(sample3domains=
+[Sample3Domain(order=Order(id=0011, value=オーダー011), param2=101, domainParam3=11歳), 
+ Sample3Domain(order=Order(id=0021, value=オーダー021), param2=102, domainParam3=12歳), 
+ Sample3Domain(order=Order(id=0031, value=オーダー031), param2=103, domainParam3=13歳)])
+```
+
+よさそうですね！
+
+
+
+
+## Sample8:オブジェクトのList自体をコピーしたい場合
+
+
+- なにかのList に対して、ListへのコピーもOK
+- コピーロジックを明示的にするために、 uses で、Listの要素のMapperを教えてあげる
+
+
+![alt text](sample8.png)
+
+
+Mapper
+
+```java
+package org.example.sample8.mapper;
+
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+
+import org.mapstruct.ReportingPolicy;
+
+import java.util.List;
+
+import org.example.sample1.mapper.Sample1Dto2DomainMapper;
+import org.example.sample1.model.Sample1Domain;
+import org.example.sample1.model.Sample1Dto;
+
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.WARN, uses = {
+        Sample1Dto2DomainMapper.class, })
+public interface Sample8Dto2DomainMapper {
+
+    List<Sample1Domain> toDomain(List<Sample1Dto> source);
+
+    void toDomainUpdate(List<Sample1Dto> source,
+            @MappingTarget List<Sample1Domain> target);
+
+}
+```
+
+
+Main
+
+```java
+
+package org.example;
+
+import java.util.List;
+
+import org.example.sample1.mapper.Sample1Dto2DomainMapper;
+import org.example.sample1.model.Sample1Dto;
+import org.example.sample2.mapper.Sample2Dto2DomainMapper;
+import org.example.sample2.model.Sample2Dto;
+import org.example.sample3.mapper.Sample3Dto2DomainMapper;
+import org.example.sample3.model.Sample3Dto;
+import org.example.sample4.mapper.Sample4Dto2DomainMapper;
+import org.example.sample4.model.Order;
+import org.example.sample4.model.Sample4Dto;
+import org.example.sample5.mapper.Sample5Dto2DomainMapper;
+import org.example.sample5.model.Sample5Domain;
+import org.example.sample5.model.Sample5Dto1;
+import org.example.sample5.model.Sample5Dto2;
+import org.example.sample5.model.Sample5Dto3;
+import org.example.sample6.mapper.Sample6Dto2DomainMapper;
+import org.example.sample6.model.Sample6Dto;
+import org.example.sample7.mapper.Sample7Dto2DomainMapper;
+import org.example.sample7.model.Sample7Dto;
+import org.example.sample8.mapper.Sample8Dto2DomainMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+
+@SpringBootApplication
+public class App implements CommandLineRunner {
+    @Autowired
+    private ApplicationContext context;
+
+    public static void main(String[] args) {
+        SpringApplication.run(App.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        {
+            var fromList = List.of(
+                    new Sample1Dto("0011", "100", "101"),
+                    new Sample1Dto("0021", "101", "102"),
+                    new Sample1Dto("0031", "102", "103"));
+
+            var mapper = context.getBean(Sample8Dto2DomainMapper.class);
+
+            var toList = mapper.toDomain(fromList);
+            for (int i = 0; i < fromList.size(); i++) {
+                System.out.println(fromList.get(i));
+                System.out.println(toList.get(i));
+            }
+        }
+    }
+
+}
+```
+
+実行結果
+
+```console
+Sample1Dto(param1=0011, param2=100, param3=101)
+Sample1Domain(param1=0011, param2=100, domainParam3=101)
+Sample1Dto(param1=0021, param2=101, param3=102)
+Sample1Domain(param1=0021, param2=101, domainParam3=102)
+Sample1Dto(param1=0031, param2=102, param3=103)
+Sample1Domain(param1=0031, param2=102, domainParam3=103)
+```
+
+よさそうですね！

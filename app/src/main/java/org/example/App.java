@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.List;
+
 import org.example.sample1.mapper.Sample1Dto2DomainMapper;
 import org.example.sample1.model.Sample1Dto;
 import org.example.sample2.mapper.Sample2Dto2DomainMapper;
@@ -16,6 +18,9 @@ import org.example.sample5.model.Sample5Dto2;
 import org.example.sample5.model.Sample5Dto3;
 import org.example.sample6.mapper.Sample6Dto2DomainMapper;
 import org.example.sample6.model.Sample6Dto;
+import org.example.sample7.mapper.Sample7Dto2DomainMapper;
+import org.example.sample7.model.Sample7Dto;
+import org.example.sample8.mapper.Sample8Dto2DomainMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -41,7 +46,6 @@ public class App implements CommandLineRunner {
             System.out.println(from);
             System.out.println(to);
         }
-
         {
             var from = new Sample2Dto("value1", "100", "49歳");
             var mapper = context.getBean(Sample2Dto2DomainMapper.class);
@@ -101,7 +105,36 @@ public class App implements CommandLineRunner {
             System.out.println(from);
             System.out.println(mapper.toDomain1(from));
             System.out.println(mapper.toDomain2(from));
-            System.out.println(mapper.toDomain3(from)+ ": idコピーはちゃんと除外できた");
+            System.out.println(mapper.toDomain3(from) + ": idコピーはちゃんと除外できた");
+        }
+
+        {
+            var fromList = List.of(
+                    new Sample3Dto("0011", "オーダー011", "101", "11歳"),
+                    new Sample3Dto("0021", "オーダー021", "102", "12歳"),
+                    new Sample3Dto("0031", "オーダー031", "103", "13歳"));
+
+            var from = new Sample7Dto(fromList);
+            var mapper = context.getBean(Sample7Dto2DomainMapper.class);
+
+            System.out.println(from);
+            var to = mapper.toDomain(from);
+            System.out.println(to);
+        }
+
+        {
+            var fromList = List.of(
+                    new Sample1Dto("0011", "100", "101"),
+                    new Sample1Dto("0021", "101", "102"),
+                    new Sample1Dto("0031", "102", "103"));
+
+            var mapper = context.getBean(Sample8Dto2DomainMapper.class);
+
+            var toList = mapper.toDomain(fromList);
+            for (int i = 0; i < fromList.size(); i++) {
+                System.out.println(fromList.get(i));
+                System.out.println(toList.get(i));
+            }
         }
 
     }

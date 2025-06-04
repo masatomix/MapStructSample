@@ -25,6 +25,6 @@ interface Sample1Dto2DomainMapper{
 
 Sample8Dto2DomainMapper .> Sample1Dto2DomainMapper: <<use>>
 Sample1Dto .> Sample1Domain :copy
-Sample8Dto2DomainMapper ..> Sample1Dto: from
-Sample8Dto2DomainMapper ..> Sample1Domain: to
+Sample8Dto2DomainMapper o..> Sample1Dto: from
+Sample8Dto2DomainMapper o..> Sample1Domain: to
 @enduml

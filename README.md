@@ -1,16 +1,25 @@
 # MapStructSample
 
-MapStruct Sample Project
+MapStruct のマッピングパターンを Sample1〜8 で示すサンプルプロジェクト。
+[masatomix/copy-utils-generator](https://github.com/masatomix/copy-utils-generator)
+が Excel から生成する MapStruct コードの検証場も兼ねる。
+
+## 必要環境
+
+- Java 21（Gradle の toolchain で固定。未導入でも Gradle が自動取得を試みる）
+- 付属の Gradle Wrapper（`./gradlew`）
 
 ## サンプル実行方法
 
-Gradle等がインストールされていれば
-
 ```
-$  ./gradlew clean bootRun
+$ ./gradlew clean bootRun
 ```
 
-で動くと思います。
+ビルド・テストのみ実行する場合:
+
+```
+$ ./gradlew build
+```
 
 
 ## Sample1: 通常パタン

@@ -6,14 +6,15 @@
  */
 plugins {
     id 'java'
-    id "io.freefair.lombok" version "8.3"
+    // 8.3 が pull する Lombok 1.18.30 は新しい JDK で javac の NoSuchFieldError を
+    // 起こすため、JDK 21 互換の Lombok を pull する版へ更新（task#1071 ビルド修復）。
+    id "io.freefair.lombok" version "8.14.4"
     id 'org.springframework.boot' version '3.0.6'
     id 'io.spring.dependency-management' version '1.1.0'
 }
 
 group = 'com.example'
 version = '0.0.3-SNAPSHOT'
-// sourceCompatibility = '17'
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -34,12 +35,18 @@ dependencies {
     
 }
 
-// // Apply a specific Java toolchain to ease working on different environments.
-// java {
-//     toolchain {
-//         languageVersion = JavaLanguageVersion.of(21)
-//     }
-// }
+// Java toolchain を明示し、環境依存(システム既定 JDK)を排除する（task#1071）。
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+// spring-boot-starter-test は JUnit 5(Jupiter)。明示しないと Jupiter テストが
+// 検出されず 0 件実行になる（task#1071）。
+tasks.named('test') {
+    useJUnitPlatform()
+}
 
 
 // tasks.withType(JavaCompile) {
